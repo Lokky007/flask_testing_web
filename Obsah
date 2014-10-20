@@ -1,0 +1,18 @@
+1.Rozdíl mezi Free softwarem a Open Source
+2.Popis systímu Git
+3.Možnost hostingu OpenSource projektům ( Některé další organizace, jako například Apache Software Foundation
+ a Tigris.org nabízejí zdarma hosting open source projektům, které odpovídají jejich poslání a zapadají mezi jejich ostatní projekty.)
+3.Popis nejběžnějších licencí MIT/GNU/GPL.
+
+---------------------------------------------
+POZNAMKY:
+-Licence(a odkaz na celé její znění)musí být uvedena na hlavní stránce, možná i typ softwaru?
+
+	"licenci v plném znění přiložíte do souboru nazvaného COPYING (nebo LICENSE) a na začátek každého
+	zdrojového souboru připojíte krátké oznámení, v němž uvedete datum copyrightu, jeho držitele
+	a typ licence, včetně odkazu na její plné znění." Pro GNU GPL citace v knize!
+
+-U webovek by měl být odkaz na kompletní dokumentaci(obrázkový tutoriál práce s prostředím admin/user?).
+-FAQ by mělo být uvedeno na stránkách
+-U veřejných projektů by měla být uvedena adresa pro komunikaci(IRC/mail/forum atd.)
+-Na začátku seznam funkcí a vlastností systému(např v jakém prostředí ho lze spustit) které jsou nebo budou v budoucnu v projektu

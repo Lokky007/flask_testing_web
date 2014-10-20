@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; 
+    charset=UTF-8" />
+  <meta name="keywords" content="VOŠ, SPŠ, Olomouc, Božetěchova, "/>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <title>Vítej!</title>
+</head>
+
+<body>
+		<h2>Login</h2>
+
+				<form action="" method="post">
+					<input type="text" name="name" value="Login" onclick="this.value = ''"></br>
+					<input type="password" name="password" value="Password" onclick="this.value = ''"></br>
+					<input type="submit" value="Login">					
+				</form>					
+					{% for message in get_flashed_messages() %}
+						{{ message }}
+					{% endfor %}
+				
+			
+
+</body>
+</html>

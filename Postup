@@ -1,0 +1,7 @@
+-Vytvořena přihlašovaci stranka se statickym admin přihlašováním.
+-Doplněna možnost odhlašení.
+-Vložena podminka a testování přihlášení(session a wraps) kvůli blokování
+ vstupu neregistrovaných uživatelů.
+-Vytvoření stránka pro výpis,zobrazení,úpravu a zveřejňování zadání.
+ Zatim pouze vypisuje názvy Zadání ve složce(os.walk) a zobrazí tlačítka pro práci(Zob,Upr,Smaz,zveř)
+

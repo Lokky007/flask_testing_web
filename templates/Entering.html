@@ -4,22 +4,12 @@
 
 		<h3>Seznam prací:</h3>
 	
-			 {% for work in list_of_works  %}
+			{% for dir in list_of_dirs  %}	
+				<a href="/Entering/{{ dir }}" >{{ dir }}</a><p>	
+			{% endfor %}
 			 
-			 			<form action="/Entering/{{work}}" method="post">
-			 				{{ work }}
-							<input type="submit" name="display" value="Zobrazit">
-							<input type="submit" name="post_on" value="Zveřejnit">		
-							<input type="submit" name="edit" value="Upravit">		
-							<input type="submit" name="delet" value="Smazat">							
-						</form>	
-								
-					<hr>
-					
-			 {% endfor %}
-			 
-			 <form action="" method="post">
-					<input  type="submit" value="Vytvořit zadání" name="create_new_entering">					
-			 </form>	
+			{% for file in list_of_files  %}	
+				<a href="/Entering/{{ name_of_work }}/{{ file }}" >{{ file }}</a><p>
+			{% endfor %}
 		
 	{% endblock %}

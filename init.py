@@ -47,33 +47,31 @@ def main_page_for_admin():
 @app.route("/Entering", methods=["POST","GET"])
 #@Login_required
 def list_of_works():
-    list_of_works=[]
+    list_of_dirs=[]
+    
     for (root, dirs, files) in walk('works'):
-        list_of_works=list_of_works+files                
-    return render_template("Entering.html",list_of_works=list_of_works)
+        list_of_dirs=list_of_dirs+dirs 
+        
+    return render_template("Entering.html",list_of_dirs=list_of_dirs )
 
-@app.route("/Entering/<name_of_work>", methods=["POST","GET"])
-def work_with_object(name_of_work):
-    way_to_file = "works/%s" %name_of_work
-    if request.method == "POST":
-        
-        #Zobrazí obsah souboru Name_of_work v defaultní složce "works"
-        if request.form.get("display",None) == "Zobrazit":
-                view_work = open(way_to_file, 'r')
-                return view_work.read()
-            
-        #Povolí načítání do klasických uživatelských účtů    
-        elif request.form.get("post_on",None) == "Zveřejnit":
-            return "zveřejni"
-        
-        #Čtení/zápis povolen,vypíše do textboxu a násladně přepíše soubor
-        elif request.form.get("edit",None) == "Upravit":
-            return "uprav"
-        
-        #Vymaže soubor,musí vyskočit potvrzovací tabulka
-        elif request.form.get("delet",None) == "Smazat":
-            return "smaž"
- 
-            
+
+@app.route("/Entering/<path:name_of_work>", methods=["POST","GET"])
+#@Login_request
+def open_class(name_of_work):  
+    list_of_files=[] 
+     
+    for (root, dirs, files) in walk('works/%s' %name_of_work): 
+        list_of_files=files
+    
+    return render_template("Entering.html", name_of_work=name_of_work, list_of_files=list_of_files)
+
+@app.route("/Entering/<name_of_work>/<path:name_of_files>")
+#@Login_request
+def open_file(name_of_work, name_of_files):
+    print name_of_work
+    print name_of_files
+    view_work = open("/works/%forge/%files" %name_of_work %name_of_files, 'r')
+    print view_work
+    return view_work.read()
 
 app.run(debug=True)

@@ -1,7 +1,9 @@
 # -*- coding: utf8 -*-
 from flask import Flask , redirect , render_template , request, session, flash
 from functools import wraps
-from os import walk , urandom , listdir
+from os import walk , urandom
+import markdown
+import codecs
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
@@ -68,10 +70,8 @@ def open_class(name_of_work):
 @app.route("/Entering/<name_of_work>/<path:name_of_files>")
 #@Login_request
 def open_file(name_of_work, name_of_files):
-    print name_of_work
-    print name_of_files
-    view_work = open("/works/%forge/%files" %name_of_work %name_of_files, 'r')
-    print view_work
-    return view_work.read()
+    view_work = codecs.open("works/%s/%s" % (name_of_work,name_of_files), 'r', 'utf-8')
+    view_work = markdown.markdown(view_work.read())
+    return render_template('work.html', work=view_work) 
 
 app.run(debug=True)

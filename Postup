@@ -4,4 +4,6 @@
  vstupu neregistrovaných uživatelů.
 -Vytvoření stránka pro výpis,zobrazení,úpravu a zveřejňování zadání.
  Zatim pouze vypisuje názvy Zadání ve složce(os.walk) a zobrazí tlačítka pro práci(Zob,Upr,Smaz,zveř)
+-Po konzultaci přepracováno zobrazení.Nyní rozděleno zadání podle tříd(složek)->vkládání zadání se řeší manuálně přímým
+ uploadem na server k ostatním zadáním.(formát .md MarkDown)
 

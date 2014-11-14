@@ -5,6 +5,10 @@ from os import walk , urandom
 import markdown
 import codecs
 
+md_ext = ['markdown.extensions.extra',
+          'work_syntax:WorkSyntax'
+          ]
+
 app = Flask(__name__)
 app.secret_key = urandom(24)
 
@@ -26,11 +30,11 @@ def get_welcome():
 @app.route("/index" , methods=["POST","GET"])
 def try_login_pass():
     if request.method == "POST":
-        if request.form["name"] != "admin" or request.form["password"] != "aaaa":
-            flash("Neplatny login nebo heslo")
-        else:
+        if request.form["name"] == "admin" and request.form["password"] == "aaaa":
             session["logged_in"] = True
             return redirect ("Main_page")
+        else:
+            flash("Neplatny login nebo heslo")
     return render_template ("index.html")
  
             
@@ -71,7 +75,7 @@ def open_class(name_of_work):
 #@Login_request
 def open_file(name_of_work, name_of_files):
     view_work = codecs.open("works/%s/%s" % (name_of_work,name_of_files), 'r', 'utf-8')
-    view_work = markdown.markdown(view_work.read())
+    view_work = markdown.markdown(view_work.read(), md_ext)
     return render_template('work.html', work=view_work) 
 
 app.run(debug=True)

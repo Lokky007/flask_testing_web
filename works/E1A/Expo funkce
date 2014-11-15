@@ -10,11 +10,11 @@ kde vstupní napětí $U_1=12V$ .
 :- 0V
 
 ::task Dělič II.
-Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$, $R_2=4,2k\Omega$,
-kde vstupní napětí $U_1=12V$.
+Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$ , $R_2=4,2k\Omega$ ,
+kde vstupní napětí $U_1=12V$ .
 ::number 6,000 0,010
 
 ::task Dělič III.
-Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$, $R_2=4,2k\Omega$,
-kde vstupní napětí $U_1=12V$.
+Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$ , $R_2=4,2k\Omega$ ,
+kde vstupní napětí $U_1=12V$ .
 ::open

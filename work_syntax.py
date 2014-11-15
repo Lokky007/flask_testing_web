@@ -12,6 +12,7 @@ import re
 class WorkSyntaxPreprocessor(Preprocessor):
     def run(self, lines):
 
+        repeat = 0
         new_lines = []
 
         task = re.compile('^::task (.+)$')
@@ -20,9 +21,8 @@ class WorkSyntaxPreprocessor(Preprocessor):
         num = re.compile('^::number (.+)$')
         lb_f = re.compile('^:- (.+)$')
         lb_t = re.compile('^:\+ (.+)$')
-        lb = re.compile('^::close')
 
-        match_par = re.compile('^\$(.+)\$[,.]$')
+        match_par = re.compile('^\$(.+)\$')
         questions = re.compile('^:')
 
         for line in lines:
@@ -32,33 +32,35 @@ class WorkSyntaxPreprocessor(Preprocessor):
             match_number = num.search(line)
             match_false = lb_f.search(line)
             match_true = lb_t.search(line)
-            match_listbox = lb.search(line)
             match_question = questions.search(line)
 
             if match_task:
-                new_lines.append('<h2>{0}</h2>'
+                new_lines.append('<h2>{0}</h2></optgroup>'
                                  .format(match_task.group(1)))
             elif match_date:
-                new_lines.append('<h5>::DATUM {0}</h5>'
+                new_lines.append('<h5>{0}</h5>'
                                  .format(match_date.group(1)))
             elif match_op:
-                new_lines.append('<h5>::OPEN - TextBox pro odpoved</h5>')
+                new_lines.append('''<br><textarea name="text1" cols="40" rows="3">
+                                 </textarea>''')
 
             elif match_number:
-                new_lines.append('<h5>::NUMBER:{0}</h5>'
+                new_lines.append('''<br><input type="text"
+                                name="jmeno" value="">'''
                                  .format(match_number.group(1)))
+
             elif match_false:
-                new_lines.append('<h5>False {0}</h5>'
+                new_lines.append('''<br><input type="radio" name="stejne_jmeno"
+                                 value="{0}">{0}'''
                                  .format(match_false.group(1)))
 
             elif match_true:
-                new_lines.append('<h5>True {0}</h5>'
+                new_lines.append('''<br><input type="radio" name="stejne_jmeno"
+                                 value="{0}">{0}'''
                                  .format(match_true.group(1)))
 
-            elif match_listbox:
-                new_lines.append('<h5>Vybrat odpoved</h5>')
-
             elif not match_question:
+
                 for word in line.split():
                     match8 = match_par.search(word)
                     if match8:

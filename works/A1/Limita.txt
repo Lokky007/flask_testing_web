@@ -1,1 +1,10 @@
 Limita
+=======
+
+* 1
+* 2
+
+
+definice:
+: to je tak
+: nebo jinak

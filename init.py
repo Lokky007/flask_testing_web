@@ -50,7 +50,6 @@ def logOut():
     flash("Byl jste odhlasen")
     return redirect("index")
 
-
 @app.route("/Main_page")
 @Login_required
 def main_page_for_admin():
@@ -78,9 +77,14 @@ def open_class(name_of_work):
     return render_template("Entering.html", name_of_work=name_of_work,
                            list_of_files=list_of_files)
 
-@app.route("/Entering/<name_of_work>/<path:name_of_files>")
-#@Login_required
+@app.route("/Entering/<name_of_work>/<path:name_of_files>", methods=["POST", "GET"])
+@Login_required
 def open_file(name_of_work, name_of_files):
+    if request.method == "POST":
+        print(request.form["number"])
+        print(request.form["choice"])
+        print(request.form["text"])
+        
     view_work = codecs.open("works/%s/%s" % (name_of_work, name_of_files), 'r',
                             'utf-8')
     view_work = markdown.markdown(view_work.read(), md_ext)

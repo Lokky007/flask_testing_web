@@ -9,6 +9,7 @@ from os import walk, urandom
 
 import markdown
 import codecs
+import sqlite3
 
 md_ext = ['markdown.extensions.extra',
           'work_syntax:WorkSyntax'
@@ -27,7 +28,6 @@ def Login_required(test):
             return redirect("/index")
     return wrap
 
-
 @app.route("/")
 def get_welcome():
     return redirect("index")
@@ -35,13 +35,28 @@ def get_welcome():
 @app.route("/index", methods=["POST", "GET"])
 def try_login_pass():
     if request.method == "POST":
-        if (request.form["name"] == "admin" and
-           request.form["password"] == "aaaa"):
+        password = request.form["password"]
+        Login = request.form["name"]
 
+        conn = sqlite3.connect('static/Database_of_users.db')
+        c = conn.cursor()
+
+        c.execute("""select * FROM Users WHERE passw =:pass
+                     and Login=:Log""", {"Log": Login, "pass": password})
+        Data = c.fetchone()
+        c.close()
+
+        if Data:
+            if Login != "Admin":
+                session["user"] = Login
                 session["logged_in"] = True
-                return redirect("Main_page")
+                return redirect("Main_user")
+            else:
+                session["user"] = Login
+                session["logged_in"] = True
+                return redirect("Main_admin")
         else:
-            flash("Neplatny login nebo heslo")
+            flash("Neplatny Login nebo Heslo")
     return render_template("index.html")
 
 @app.route("/LogOut")
@@ -50,7 +65,7 @@ def logOut():
     flash("Byl jste odhlasen")
     return redirect("index")
 
-@app.route("/Main_page")
+@app.route("/Main_admin")
 @Login_required
 def main_page_for_admin():
     return render_template("Basic_template.html")
@@ -78,16 +93,21 @@ def open_class(name_of_work):
                            list_of_files=list_of_files)
 
 @app.route("/Entering/<name_of_work>/<path:name_of_files>", methods=["POST", "GET"])
-@Login_required
+#@Login_required
 def open_file(name_of_work, name_of_files):
     if request.method == "POST":
         print(request.form["number"])
         print(request.form["choice"])
         print(request.form["text"])
-        
+
     view_work = codecs.open("works/%s/%s" % (name_of_work, name_of_files), 'r',
                             'utf-8')
     view_work = markdown.markdown(view_work.read(), md_ext)
     return render_template('work.html', work=view_work)
+
+@app.route("/Main_user")
+#@Login_required
+def Main_page_for_user():
+    return render_template("Basic_user.html")
 
 app.run(debug=True)

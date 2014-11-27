@@ -3,7 +3,7 @@
 ::task Dělič I.
 Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$, $R_2=4,2k\Omega$,
 kde vstupní napětí $U_1=12V$ .
-::close
+
 :- 12V
 :- -12V
 :+ 6V

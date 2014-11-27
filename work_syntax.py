@@ -21,9 +21,6 @@ class WorkSyntaxPreprocessor(Preprocessor):
         lb_f = re.compile('^:- (.+)$')
         lb_t = re.compile('^:\+ (.+)$')
 
-        match_par = re.compile('^\$(.+)\$?')
-        questions = re.compile('^:')
-
         for line in lines:
 
             match_task = task.search(line)
@@ -32,7 +29,6 @@ class WorkSyntaxPreprocessor(Preprocessor):
             match_number = num.search(line)
             match_false = lb_f.search(line)
             match_true = lb_t.search(line)
-            match_question = questions.search(line)
 
             if match_task:
                 new_lines.append('<h2>{0}</h2></optgroup>'
@@ -60,25 +56,6 @@ class WorkSyntaxPreprocessor(Preprocessor):
                 new_lines.append('''<br><span style="color: red"><input type="radio" name="choice"
                                  value="{0}"> {0}</span>'''
                                  .format(match_true.group(1)))
-
-            elif not match_question:
-
-                for word in line.split():
-                    match8 = match_par.search(word)
-                    new_param = ""
-                    False
-                    if match8:
-                        for letter in word:
-                            if letter == "$" and True:
-                                False
-                            elif True:
-                                new_param = new_param + letter
-                            elif letter == "$":
-                                True
-
-                        new_lines.append('{0}'.format(new_param))
-                    else:
-                        new_lines.append(word)
             else:
                 new_lines.append(line)
         new_lines.append('''<br><input type="submit"

@@ -10,19 +10,9 @@
 	  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 	  <title>Vítej!</title>
 	</head>
-	
-	<body>
-			<h2>Login</h2>
-		
-					<form action="" method="post">
-						<input type="text" name="name" value="Login" onclick="this.value = ''"></br>
-						<input type="password" name="password" value="Password" onclick="this.value = ''"></br>
-						<input type="submit" value="Login">					
-					</form>					
-						{% for message in get_flashed_messages() %}
-							{{ message }}
-						{% endfor %}
-					
-	
-	</body>
+		<body>
+			<p>Přihlášen jako {{ session["user"] }} </p>
+			
+			<p>beeeeeeeeee</p>
+		</body>
 </html>

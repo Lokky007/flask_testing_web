@@ -12,7 +12,7 @@
 	</head>
 
 	<body>
-		<p>Přihlášen jako Admin</p>
+		<p>Přihlášen jako {{ session["user"] }} </p>
 		
 		<a href="/Main_page">Hlavni</a>
 		
@@ -20,7 +20,8 @@
 		
 		<a href="/LogOut">Odhlášení</a>
 		
-		{% block list_of_titles %}{% endblock %}
+		{% block list_of_titles %}
+		{% endblock %}
 
 	</body>
 </html>

@@ -7,4 +7,7 @@
 -Po konzultaci přepracováno zobrazení.Nyní rozděleno zadání podle tříd(složek)->vkládání zadání se řeší manuálně přímým
  uploadem na server k ostatním zadáním.(formát .md MarkDown)
  -Markdawn rozeznává značky v zadání a převádí je do html kódu
+ -Do zobrazení implementován MatJax javascript
+ -Vytvoření databáze
+ -Vytvoření prostředí pro uživatele
 

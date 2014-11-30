@@ -1,0 +1,10 @@
+{% extends "Basic_user.html" %}
+		
+	{% block list_w %}
+	
+		<h3>Dostupná zadání</H3>
+		{% for work in list_dir %}	
+			 <a href="/Main_user/{{ work }}" >Zadání</a><p>	
+		{% endfor %}
+		
+	{% endblock %}

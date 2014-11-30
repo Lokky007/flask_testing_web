@@ -11,8 +11,15 @@
 	  <title>Vítej!</title>
 	</head>
 		<body>
-			<p>Přihlášen jako {{ session["user"] }} </p>
+			<p>Přihlášen jako {{ session["user"] }} </p>			
+			<a href="/LogOut">Odhlášení</a>
+			<a href="/Main_user">Zadání</a>
+
+		{% block list_w %}
+		{% endblock %}
+		{% block content %}
+		{% endblock %}
 			
-			<p>beeeeeeeeee</p>
+
 		</body>
 </html>

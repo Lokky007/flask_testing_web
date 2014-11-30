@@ -1,10 +1,10 @@
-Limita
-=======
+::date 3.6.2013 12:00 14.1.2015 18:00
 
-* 1
-* 2
+::task Dělič I.
+Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$, $R_2=4,2k\Omega$,
+kde vstupní napětí $U_1=12V$ .
 
-
-definice:
-: to je tak
-: nebo jinak
+:- 12V
+:- -12V
+:+ 6V
+:- 0V

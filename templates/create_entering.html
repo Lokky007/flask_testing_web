@@ -1,0 +1,43 @@
+{% extends "Basic_template.html" %}
+
+	{% block create_entering %}
+	<br>
+	<br>
+		{% for message in get_flashed_messages() %}
+			{{ message }}
+		{% endfor %}
+		
+		<form action="" method="post">
+		<br>
+				Název: <textarea name="name" cols="50" rows="1"></textarea>
+		Složka:
+			<select name = "select">
+				{% for dir in list_dir %}	
+					 <option value="{{dir}}">{{dir}}</option>
+				{% endfor %}
+			</select> <br>
+				<textarea name="entering" cols="100" rows="30" onclick="this.value = ''">Vložte text...</textarea>
+			<br />
+				<input type="submit" value="Uložit" />
+				
+			<input type="file" name="file">
+		</form>
+	
+
+	<H3>Legenda</h3>
+	</br>
+	::task Název otázky </br> 
+	Otázka </br>
+	</br>
+	:- Volba 1(špatná)</br>
+	:+ Volba 2(správná)</br>
+	</br>
+	::number 6,000 0,010</br>
+	</br>
+	$R_1=4,2k\Omega$</br>
+	$U_1=12V$.</br>
+	</br>
+	::open (Otevřená otázka)</br>
+
+	
+	{% endblock %}

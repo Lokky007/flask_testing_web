@@ -1,3 +1,5 @@
 eclipse.preferences.version=1
+encoding/database.py=utf8
 encoding/init.py=utf8
-encoding/work_syntax.py=utf8
+encoding/work_syntax_admin.py=utf8
+encoding/work_syntax_user.py=utf8

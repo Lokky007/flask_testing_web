@@ -31,7 +31,7 @@ class WorkSyntaxPreprocessor(Preprocessor):
             match_true = lb_t.search(line)
 
             if match_task:
-                new_lines.append('<h2>{0}</h2></optgroup>'
+                new_lines.append('<h2>{0}</h2>'
                                  .format(match_task.group(1)))
             elif match_date:
                 new_lines.append('<h5>{0}</h5>'
@@ -59,7 +59,8 @@ class WorkSyntaxPreprocessor(Preprocessor):
             else:
                 new_lines.append(line)
         new_lines.append('''<br><input type="submit"
-                        value ="Odeslat"></form>''')
+                        value ="Odeslat">
+                        </form>''')
         return new_lines
 
 class WorkSyntax(Extension):

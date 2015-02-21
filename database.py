@@ -15,6 +15,7 @@ class Student(db.Entity):
     akcee = Set("Akce")
     vysledky_testu = Set("Vysledek_testu")
 
+
 class Akce(db.Entity):
     """číselník akcí, které může uživatel na webu provádět"""
     _table_ = "akce"
@@ -24,6 +25,7 @@ class Akce(db.Entity):
     test = Optional("Test")
     vysledek_testu = Optional("Vysledek_testu")
 
+
 class Vysledek_testu(db.Entity):
     _table_ = "vysledek_testu"
     id = PrimaryKey(int, auto=True)
@@ -32,6 +34,7 @@ class Vysledek_testu(db.Entity):
     odpovedi = Set("Odpoved")
     akcee = Set(Akce)
 
+
 class Test(db.Entity):
     _table_ = "test"
     id = PrimaryKey(int, auto=True)
@@ -39,20 +42,23 @@ class Test(db.Entity):
     otazky_testus = Set("Otazka_testu")
     akcee = Set(Akce)
 
+
 class Otazka(db.Entity):
     _table_ = "otazka"
     id = PrimaryKey(int, auto=True)
-    text = Required(str)
-    spravna_odpoved = Required(str)
+    text = Required(unicode)
+    spravna_odpoved = Required(unicode)
     odpovedi = Set("Odpoved")
     otazky_testus = Set("Otazka_testu")
+
 
 class Odpoved(db.Entity):
     _table_ = "odpoved"
     id = PrimaryKey(int, auto=True)
     otazka = Required(Otazka)
     text = Required(unicode)
-    vysledek_testu = Required(Vysledek_testu)
+    vysledky_testu = Set(Vysledek_testu)
+
 
 class Otazka_testu(db.Entity):
     _table_ = "otazka_testu"

@@ -10,13 +10,13 @@ from os import walk, urandom
 
 import markdown
 import codecs
-import os
+import os, random
 import psycopg2
 import database
 from datetime import datetime, time
 from pony.orm import *
-from database import Student, Akce, Test, Otazka_testu, Otazka
-from dbus.decorators import method
+from database import Student, Akce, Test, Otazka_testu, Otazka, Odpoved,\
+    Vysledek_testu
 
 md_ext1 = ['markdown.extensions.extra',
            'work_syntax_admin:WorkSyntax']
@@ -34,9 +34,11 @@ db = Database("postgres", host="localhost", user="postgres",
 
 
 def Login_required_for_admin(test):
+    """Testování přihlašení admina
+    """
     @wraps(test)
     def wrap(*arg, **kwargs):
-        if "logged_in" in session and "access" in session:
+        if "admin" in session['user']:
             return test(*arg, **kwargs)
         else:
             flash("Nedostatečná práva... Byl jste odhlasen!")
@@ -44,9 +46,11 @@ def Login_required_for_admin(test):
     return wrap
 
 def Login_required_for_user(test):
+    """Testování přihlášení klasického uživatele
+    """
     @wraps(test)
     def wrap(*arg, **kwargs):
-        if "logged_in" in session:
+        if "user" in session and "admin" not in session['user']:
             return test(*arg, **kwargs)
         else:
             flash("Nejdriv se prihlas...")
@@ -55,20 +59,24 @@ def Login_required_for_user(test):
 
 @app.route("/")
 def get_welcome():
+    """přesměrování na indexovou stránku
+    """
     return redirect("index")
 
 @app.route("/index", methods=["POST", "GET"])
 @db_session
 def try_login_pass():
+    """indexová stránka s přihlášenim + kontrola přihlašovacích údajů
+    """
     if request.method == "POST":
         password = request.form["password"]
         Login = request.form["name"]
 
         if ((Login == "user" and password == "user") or
-            (Login == "doc32301" and password == "32301")):
+            (Login == "doc32301" and password == "32301")): # pevně statovení studenti(pro test)
             print ("prihlasen Uživatel")
             session["user"] = Login
-            session["logged_in"] = True
+            ###DOČASNÉ!!! Vytvoření studenta v databázi, pokud tam již není
             if not exists(o for o in Student if o.login is Login):
                 Student(login=Login, jmeno="adm", prijmeni="Das",
                         hash="13213156")
@@ -80,11 +88,10 @@ def try_login_pass():
             select(c for c in Akce).show()
             return redirect("Main_user")
 
-        elif Login == "admin" and password == "aaaa":
+        elif Login == "admin" and password == "aaaa": # pevně stanovená admin(pro test)
             print ("prihlášen Admin")
             session["user"] = Login
-            session["access"] = True
-            session["logged_in"] = True
+            ### DOČASNÉ!!! Vytvoření admina v databázi, pokud tam již není
             if not exists(o for o in Student if o.login is Login):
                 Student(login=Login, jmeno="adasm", prijmeni="Das",
                         hash="13213156")
@@ -98,15 +105,21 @@ def try_login_pass():
 
         else:
             flash("Neplatny Login nebo Heslo")
-    return render_template("index.html")
+    citat = (random.choice(codecs.open("static/citaty.txt", 'r', 'UTF-8').readlines())).split('//')
+    return render_template("index.html", citat=citat)
 
 @app.route("/LogOut")
 def logOut():
+    """Odhlášení přihlášeného
+    """
     flash("Byl jste odhlasen")
+
+    ########################### Návrh zápisu odhlášení do databáze ###################
     #Login = session["user"]
     #i = datetime.now()
     #p1 = select(o for o in Student if o.login is Login).get()
-    #Akce(cas=i.strftime('%Y/%m/%d %H:%M:%S'), student=p1, test="LogIn")
+    #Akce(cas=i.strftime('%Y/%m/%d %H:%M:%S'), student=p1")
+
     session.pop("logged_in", None)
     session.pop("access", None)
     return redirect("index")
@@ -114,18 +127,26 @@ def logOut():
 @app.route("/Main_admin")
 @Login_required_for_admin
 def main_page_for_admin():
+    """Hlavní stranka pro admina
+    """
     return render_template("Basic_template.html")
 
 @app.route("/Main_user")
 @Login_required_for_user
 def Main_page_for_user():
+    """hlavni stranka pro obyč. uživatele. Vypsání dostupných testů 
+       dle hlavičky dokumentu
+    """
     list_works = []
     list_dir = []
 
     for (root, dirs, files) in walk('works'):
-        for dir in dirs:
-            for file in os.listdir("works/%s" % dir):
-                if file.endswith(".txt"):
+        for dir in dirs: #  otevře podložky ve složce /works
+            for file in os.listdir("works/%s" % dir): #  čte soubory ve složce
+                if file.endswith(".txt"): #  kontroluje koncovku souboru.
+                                          #  POZOR! Pokud není soubor uložen pod koncovkou .txt
+                                          #         nedojde ke kontrole a nevyobrazí se ani 
+                                          #         pokud splňuje podmínku
                     dec = "works/%s/%s" % (dir, file)
                     fil = open(dec, "r")
                     f = fil.readline()
@@ -146,14 +167,11 @@ def Main_page_for_user():
                                        int(den_konec), int(hod_konec),
                                        int(min_konec))
 
-                    date_start = date_od.strftime("%Y-%m-%d %H:%M")
-                    date_end = date_do.strftime("%Y-%m-%d %H:%M")
                     now = datetime.now()
 
-                    if (date_od < now < date_do) is True:
-                        list_dir.append(dec)
+                    if (date_od < now < date_do) is True: #  jestli je v rozmezi datumu platosti
+                        list_dir.append(dec)              #  tak se zobrazí
                         list_works.append(file)
-
                     fil.close()
     return render_template("basic_user_list.html", list_works=list_works,
                            list_dir=list_dir)
@@ -163,27 +181,45 @@ def Main_page_for_user():
 @Login_required_for_user
 @db_session
 def Work_user(base, name_user_dir, name_user_file):
+    """Otevření zvoleného testu + vyobrazeni podle markdownu
+       Přijímá a zaznamenává volbu uživatele u otázek
+    """
     if request.method == 'POST':
         print (name_user_file)
-        for i in range(1, 100):
-            if request.form.get("%i" % (i)) == "Odeslat":
-                break
-            print (i, request.form.get("%s" % i))
-            dec = request.form.get("%s" % i)
-            """
-            print ("choice", request.form.get("%i", "None") )
-            print ("number", request.form.get("number", "None"))
-            print ("text", request.form.get("text", "None"))
-            """
         Login = session["user"]
         i = datetime.now()
+        cela_otazka = ""
+        text = ""
+        check = open('works/%s/%s' % (name_user_dir, name_user_file), 'r')
         p1 = select(o for o in Student if o.login is Login).get()
         Akce(cas=i.strftime('%Y/%m/%d %H:%M:%S'), student=p1)
-        Test()
 
-        select(c for c in Student).show()
-        select(c for c in Akce).show()
-        select(c for c in Test).show()
+        i = 0
+        for line in check.readlines():
+            line = line.decode('utf-8')
+            if line != "\n" and line != "\r\n":
+                for l in line:
+                    if l != ":":
+                        cela_otazka = cela_otazka + line
+                        break
+                    elif l == ":":
+                        if cela_otazka != "":
+                            i += 1
+                            text = request.form.get("%i" % i, "Nevyplneno")
+                            p4 = select(o for o in Test if o.id is 2).get()
+                            if not exists(o for o in Vysledek_testu if o.student is p1 and o.test is p4):
+                                Vysledek_testu(student=p1, test=p4)
+                            p2 = select(o for o in Otazka if o.text is cela_otazka).get()
+                            p3 = select(o for o in Vysledek_testu if o.test is p4).get()
+                            print ("cela otazka", cela_otazka)
+                            print ("Volba", text, "\n------------------------")
+                            print ("\n P1ka je", p1)
+                            print ("\n P2ka je", p2)
+                            print ("\n P3ka je", p3)
+                            print ("\n P4ka je", p4)
+                            Odpoved(otazka=p2, text=text, vysledky_testu=p3)
+                            cela_otazka = ""
+                        break
 
     view_work = codecs.open("%s/%s/%s" % (base, name_user_dir, name_user_file),
                             'r', 'utf-8')
@@ -193,6 +229,8 @@ def Work_user(base, name_user_dir, name_user_file):
 @app.route("/Entering", methods=["POST", "GET"])
 @Login_required_for_admin
 def list_of_works():
+    """Zobrazení všech složek tříd
+    """
     list_of_dirs = []
 
     for (root, dirs, files) in walk('works'):
@@ -204,6 +242,8 @@ def list_of_works():
 @app.route("/Entering/<path:name_of_work>", methods=["POST", "GET"])
 @Login_required_for_admin
 def open_class(name_of_work):
+    """Zobrazení uložených testů ve zvolené složce třídy
+    """
     list_of_files = []
 
     for (root, dirs, files) in walk('works/%s' % name_of_work):
@@ -216,12 +256,8 @@ def open_class(name_of_work):
            methods=["POST", "GET"])
 @Login_required_for_admin
 def open_file(name_of_work, name_of_files):
-    if request.method == "POST":
-        return redirect("Entering")
-        print(request.form["number"])
-        print(request.form["choice"])
-        print(request.form["text"])
-
+    """Otevře vybraný text pro náhled pomocí markdownu
+    """
     view_work = codecs.open("works/%s/%s" % (name_of_work, name_of_files), 'r',
                             'utf-8')
     view_work = markdown.markdown(view_work.read(), md_ext1)
@@ -231,20 +267,50 @@ def open_file(name_of_work, name_of_files):
 @Login_required_for_admin
 @db_session
 def create_entering():
+    """import nového testu přes textbox či tlačítkem
+    """
     def add_database(select, name):
+        """funkce pro import přes textbox
+           čte každý řádek a detekuje otázku či správnou odpověd
+           provede import do databáze
+        """
         print("Položka %s přidána" % (name))
         check = open('works/%s/%s' % (select, name), 'r')
-        for line in check.readlines():
+        line = ""
+        lin = ""
+
+        for line in check.readlines(): #  čte řádky a detekuje části testu
+            print(line)
+            line = line.decode('utf-8')
             if line == "\r\n":
                 None
             else:
                 for l in line:
                     if l != ":":
-                        Otazka(text=line, spravna_odpoved=None)
+                        lin = lin + line
+                        print (lin)
                         break
                     break
-        print ("Done")
-        select(c for c in Otazka).show()
+                if line.split()[0] == ":+":
+                    linka = line.replace(":+","")
+                    print ("Otazka", lin)
+                    print ("spravna odpoved", linka)
+                    Otazka(text=lin,
+                           spravna_odpoved=linka)
+                    lin = ""
+
+                elif line.split()[0] == "::number":
+                    linka = line.split()[1]
+                    print ("spravna odpoved", linka)
+                    Otazka(text=lin,
+                           spravna_odpoved=linka)
+                    lin = ""
+
+                elif line.split()[0] == "::open":
+                    print ("Otevřená otázka")
+                    Otazka(text=lin,
+                           spravna_odpoved="Otevřená otázka")
+                    lin = ""
 
     if request.method == 'POST':
         name = request.form["name"]
@@ -266,7 +332,7 @@ def create_entering():
         else:
             flash("Žádná vložená data")
 
-    list_of_dirs = []
+    list_of_dirs = [] #  položky pro listbox. Výběr složky pro import testu  
     for (root, dirs, files) in walk('works/'):
         list_of_dirs = list_of_dirs + dirs
     return render_template('create_entering.html',

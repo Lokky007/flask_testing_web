@@ -1,0 +1,7 @@
+::date 30.11.2013 1:00 1.1.2020 15:00
+
+::task Barva
+
+Je Černa opravdu černá?
+:+ Ano
+:- ne
